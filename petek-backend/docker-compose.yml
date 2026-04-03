@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  # 1. PostgreSQL (Veritabanı)
+  postgres:
+    image: postgres:15-alpine
+    container_name: petek-postgres
+    environment:
+      POSTGRES_USER: petek_admin
+      POSTGRES_PASSWORD: petek_admin
+      POSTGRES_DB: petek_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - petek-pgdata:/var/lib/postgresql/data
+    restart: always
+
+  # 2. Redis (Önbellek ve Oturum)
+  redis:
+    image: redis:7-alpine
+    container_name: petek-redis
+    ports:
+      - "6379:6379"
+    restart: always
+
+  # 3. RabbitMQ (Mikroservisler Arası Haberleşme)
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: petek-rabbitmq
+    ports:
+      - "5672:5672"   # Kuyruk haberleşme portu
+      - "15672:15672" # Yönetim paneli arayüz portu
+    restart: always
+  
+  kong:
+    image: kong:latest
+    container_name: petek-kong
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: "/usr/local/kong/declarative/kong.yml"
+      KONG_PROXY_ACCESS_LOG: "/dev/stdout"
+      KONG_ADMIN_ACCESS_LOG: "/dev/stdout"
+      KONG_PROXY_ERROR_LOG: "/dev/stderr"
+      KONG_ADMIN_ERROR_LOG: "/dev/stderr"
+    ports:
+      - "8000:8000" # Frontend buraya istek atacak
+      - "8001:8001" # Kong Admin paneli
+    volumes:
+      - ./kong.yml:/usr/local/kong/declarative/kong.yml
+
+volumes:
+  petek-pgdata:

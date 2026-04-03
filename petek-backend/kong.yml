@@ -1,0 +1,58 @@
+_format_version: "3.0"
+services:
+  - name: auth-service
+    url: http://host.docker.internal:3000
+    routes:
+        
+      - name: auth-public
+        paths:
+          - /auth/login
+          - /auth/register
+        strip_path: false
+
+      # 2. KORUMALI YOLLAR (Token İster)
+      - name: auth-protected
+        paths:
+          - /auth/send-edu-code
+          - /auth/verify-edu-code
+        strip_path: false
+        plugins:
+          - name: jwt
+            config:
+              claims_to_verify:
+                - exp
+
+                
+  # --- 2. YENİ OFİS (LISTINGS) ---
+  - name: listings-service
+    url: http://host.docker.internal:3001
+    routes:
+      # YENİ EKLENEN PUBLIC ROTA (Token İstemez)
+      - name: listings-public
+        paths:
+          - /listings
+        methods:
+          - GET
+        strip_path: false
+        
+      # ESKİ KORUMALI ROTA (Token İster)
+      - name: listings-protected
+        paths:
+          - /listings/create
+        methods:
+          - POST
+        strip_path: false
+        plugins:
+          - name: jwt
+            config:
+              claims_to_verify:
+                - exp
+
+# Kong'un JWT'leri kiminle doğrulayacağını (Consumer) ayarlıyoruz
+consumers:
+  - username: petek-frontend
+    jwt_secrets:
+      - key: "petek-frontend-key"
+        # DİKKAT: Buradaki secret, auth.module.ts içindeki JWT_SECRET ile BİREBİR AYNI olmalı!
+        secret: "petek_super_gizli_anahtar_2026" 
+        algorithm: HS256

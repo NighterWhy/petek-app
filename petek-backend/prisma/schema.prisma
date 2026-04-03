@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  
+}
+
+enum Role {
+  STUDENT
+  DONOR
+  ADMIN
+}
+
+model User {
+  id                  String   @id @default(uuid())
+  email               String   @unique
+  eduEmail            String?  @unique
+  passwordHash        String
+  fullName            String
+
+  phone               String?
+  birthDate           DateTime?
+  
+  // KAYIT SİSTEMİ VE GÜVENLİK
+  role                Role     @default(DONOR)
+  isEduVerified       Boolean  @default(false)
+  
+  // İTİBAR VE GÜVEN SKORU
+  trustScore          Int      @default(20)
+  averageRating       Float    @default(0.0)
+  ratingCount         Int      @default(0)
+  
+  // LOKASYON VERİLERİ
+  city                String?
+  district            String?
+  campusName          String?
+  
+  // AKADEMİK VE YAŞAM TARZI
+  universityName      String?
+  department          String?
+  enrollmentYear      Int?
+  livingArrangement   String?
+  
+  // DAVRANIŞSAL VERİLER VE ML ÇIKTILARI
+  preferredCategories String[]
+  behaviorClusterId   Int?
+  churnRiskScore      Float?
+  
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  listings            Listing[]
+
+  @@map("users")
+}
+
+
+model Listing {
+  id              String   @id @default(uuid())
+  title           String
+  description     String
+  category        String   // Örn: MOBILYA, KITAP, ELEKTRONIK
+  condition       String   // Örn: YENI, IKINCI_EL
+  price           Float    
+  isDonation      Boolean  @default(false)
+  
+  // Lokasyon ve Isı Haritası (Yöntem 1)
+  city            String
+  district        String
+  neighborhood    String
+  latitude        Float
+  longitude       Float
+
+  imageUrls       String[] 
+  status          String   @default("ACTIVE") // ACTIVE, SOLD, DELETED
+  
+  // ML (Makine Öğrenmesi) Analiz Verileri
+  viewCount       Int      @default(0)
+  favoriteCount   Int      @default(0)
+
+  // İlişki (Bu ilanı kim açtı?)
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("listings")
+}
