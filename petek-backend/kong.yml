@@ -27,7 +27,7 @@ services:
   - name: listings-service
     url: http://host.docker.internal:3001
     routes:
-      # YENİ EKLENEN PUBLIC ROTA (Token İstemez)
+      #  PUBLIC ROTA (Token İstemez)
       - name: listings-public
         paths:
           - /listings
@@ -35,10 +35,11 @@ services:
           - GET
         strip_path: false
         
-      # ESKİ KORUMALI ROTA (Token İster)
+      #  KORUMALI ROTA (Token İster)
       - name: listings-protected
         paths:
           - /listings/create
+          - /listings/upload-images
         methods:
           - POST
         strip_path: false
