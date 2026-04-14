@@ -52,6 +52,7 @@ model User {
   updatedAt           DateTime @updatedAt
 
   listings            Listing[]
+  favorites           Favorite[]
 
   @@map("users")
 }
@@ -75,6 +76,7 @@ model Listing {
 
   imageUrls       String[] 
   status          String   @default("ACTIVE") // ACTIVE, SOLD, DELETED
+  favorites       Favorite[]
   
   // ML (Makine Öğrenmesi) Analiz Verileri
   viewCount       Int      @default(0)
@@ -83,9 +85,25 @@ model Listing {
   // İlişki (Bu ilanı kim açtı?)
   userId          String
   user            User     @relation(fields: [userId], references: [id])
+  
 
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
   @@map("listings")
+}
+
+model Favorite {
+  id        String   @id @default(uuid())
+  userId    String
+  listingId String
+  createdAt DateTime @default(now())
+
+  // İlişkiler
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  // Bir kullanıcı bir ilanı sadece bir kez favorileyebilir
+  @@unique([userId, listingId])
+  @@map("favorite")
 }

@@ -19,6 +19,15 @@
         "tsConfigPath": "apps/auth/tsconfig.app.json"
       }
     },
+    "chat": {
+      "type": "application",
+      "root": "apps/chat",
+      "entryFile": "main",
+      "sourceRoot": "apps/chat/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/chat/tsconfig.app.json"
+      }
+    },
     "listings": {
       "type": "application",
       "root": "apps/listings",
@@ -26,6 +35,17 @@
       "sourceRoot": "apps/listings/src",
       "compilerOptions": {
         "tsConfigPath": "apps/listings/tsconfig.app.json"
+      }
+    },
+    "notifications": {
+      "type": "application",
+      "root": "apps/notifications",
+      "entryFile": "main",
+      "sourceRoot": "apps/notifications/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/notifications/tsconfig.app.json",
+        "assets": [{ "include": "mail/assets/**", "outDir": "dist/apps/notifications" }],
+        "watchAssets": true
       }
     },
     "petek-backend": {

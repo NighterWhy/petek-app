@@ -40,8 +40,15 @@ services:
         paths:
           - /listings/create
           - /listings/upload-images
+          - /listings/.*/favorite
+          - /listings/favorites
+          - /listings/my-listings # Yeni eklenen
+          - /listings/(?!.*(?:create|upload-images|favorite|favorites|my-listings)).* # Dinamik ID'ler için Regex
         methods:
           - POST
+          - GET
+          - DELETE
+          - PATCH
         strip_path: false
         plugins:
           - name: jwt

@@ -27,9 +27,15 @@ services:
   rabbitmq:
     image: rabbitmq:3-management-alpine
     container_name: petek-rabbitmq
+    
     ports:
-      - "5672:5672"   # Kuyruk haberleşme portu
+      - "5673:5672"   # Kuyruk haberleşme portu
       - "15672:15672" # Yönetim paneli arayüz portu
+    environment:
+      RABBITMQ_DEFAULT_USER: petek
+      RABBITMQ_DEFAULT_PASS: petek123
+    networks:
+      - kong-net
     restart: always
   
   kong:
@@ -50,3 +56,8 @@ services:
 
 volumes:
   petek-pgdata:
+
+
+networks:
+  kong-net:
+    external: true
