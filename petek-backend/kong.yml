@@ -1,16 +1,15 @@
 _format_version: "3.0"
 services:
+  # --- 1. AUTH OFİSİ ---
   - name: auth-service
     url: http://host.docker.internal:3000
     routes:
-        
       - name: auth-public
         paths:
           - /auth/login
           - /auth/register
         strip_path: false
 
-      # 2. KORUMALI YOLLAR (Token İster)
       - name: auth-protected
         paths:
           - /auth/send-edu-code
@@ -22,12 +21,16 @@ services:
               claims_to_verify:
                 - exp
 
+      
+      - name: auth-api-route
+        paths:
+          - /api/auth
+        strip_path: false
                 
-  # --- 2. YENİ OFİS (LISTINGS) ---
+  # --- 2. LISTINGS OFİSİ ---
   - name: listings-service
     url: http://host.docker.internal:3001
     routes:
-      #  PUBLIC ROTA (Token İstemez)
       - name: listings-public
         paths:
           - /listings
@@ -35,15 +38,14 @@ services:
           - GET
         strip_path: false
         
-      #  KORUMALI ROTA (Token İster)
       - name: listings-protected
         paths:
           - /listings/create
           - /listings/upload-images
           - /listings/.*/favorite
           - /listings/favorites
-          - /listings/my-listings # Yeni eklenen
-          - /listings/(?!.*(?:create|upload-images|favorite|favorites|my-listings)).* # Dinamik ID'ler için Regex
+          - /listings/my-listings
+          - /listings/(?!.*(?:create|upload-images|favorite|favorites|my-listings)).*
         methods:
           - POST
           - GET
@@ -55,12 +57,34 @@ services:
             config:
               claims_to_verify:
                 - exp
+                
+      - name: listings-api-route
+        paths:
+          - /api/listings
+        strip_path: false
+
+  # --- 3. CHAT OFİSİ ---
+  - name: chat-service
+    url: http://host.docker.internal:3002 # DİKKAT: .env dosyasındaki portla aynı olmalı
+    routes:
+      - name: chat-api-route
+        paths:
+          - /api/chat
+        strip_path: false
+
+  # --- 4. NOTIFICATIONS OFİSİ ---
+  - name: notifications-service
+    url: http://host.docker.internal:3003 # DİKKAT: .env dosyasındaki portla aynı olmalı
+    routes:
+      - name: notifications-api-route
+        paths:
+          - /api/notifications
+        strip_path: false
 
 # Kong'un JWT'leri kiminle doğrulayacağını (Consumer) ayarlıyoruz
 consumers:
   - username: petek-frontend
     jwt_secrets:
       - key: "petek-frontend-key"
-        # DİKKAT: Buradaki secret, auth.module.ts içindeki JWT_SECRET ile BİREBİR AYNI olmalı!
         secret: "petek_super_gizli_anahtar_2026" 
         algorithm: HS256

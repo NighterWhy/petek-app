@@ -1,5 +1,6 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AuthModule } from './auth.module';
 
 async function bootstrap() {
@@ -10,6 +11,17 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
-  await app.listen(process.env.port ?? 3000);
+
+  const config = new DocumentBuilder()
+    .setTitle('Petek - Auth Service')
+    .setDescription('Petek platformu için kimlik doğrulama servisi API dokümantasyonu')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/auth', app, document);
+
+  await app.listen(process.env.AUTH_PORT ?? 3000);
 }
 bootstrap();
