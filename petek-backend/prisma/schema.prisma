@@ -107,3 +107,11 @@ model Favorite {
   @@unique([userId, listingId])
   @@map("favorite")
 }
+
+model Message {
+  id         String   @id @default(uuid())
+  content    String
+  senderId   String
+  receiverId String
+  createdAt  DateTime @default(now())
+}

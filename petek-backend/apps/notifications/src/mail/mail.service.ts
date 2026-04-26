@@ -154,7 +154,7 @@ export class MailService {
         <p>Artık diğer öğrenciler ilanınızı görebilir ve platform üzerinden sizinle iletişime geçebilir. Bu sosyal dayanışmaya katkı sağladığınız için teşekkür ederiz.</p>
         
         <div class="button-container">
-          <a href="https://petek.app" class="button">İlanı Gör</a>
+          <a href="https://www.instagram.com/serhatsimsek_0/" class="button">İlanı Gör</a>
         </div>
       </div>
       
